@@ -1,13 +1,13 @@
 {
   "version": "0.1.0",
-  "description": "An example Snap written in TypeScript.",
-  "proposedName": "TypeScript Example",
+  "description": "Simple Snap to generate a secret key with ECDH",
+  "proposedName": "ECDH Snap",
   "repository": {
     "type": "git",
     "url": "https://github.com/MetaMask/template-snap-monorepo.git"
   },
   "source": {
-    "shasum": "jD8E4o4QOJElmDkQFcIITLrcKyZiR81o+rOnEMGSvOY=",
+    "shasum": "gL6a8dGwYUTqWv/4yyVX7YyCeFoehopUZjZMxMtT20E=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
