@@ -1,6 +1,19 @@
 import { useContext } from 'react';
 import styled from 'styled-components';
-
+import {
+  Input,
+  Spinner,
+  FormControl,
+  FormLabel,
+  Box,
+  InputGroup,
+  Text,
+  SimpleGrid,
+  Flex,
+  InputRightElement,
+  Spacer,
+  Link,
+} from "@chakra-ui/react";
 import {
   ConnectButton,
   InstallFlaskButton,
@@ -17,6 +30,13 @@ import {
   sendHello,
   shouldDisplayReconnectButton,
 } from '../utils';
+
+import { handleUserLogin } from 'snap/src/session';
+
+import React, { useCallback, useState, useEffect } from "react";
+
+
+    
 
 const Container = styled.div`
   display: flex;
@@ -103,6 +123,9 @@ const ErrorMessage = styled.div`
 `;
 
 const Index = () => {
+  /** String input for who is receiving the money */
+  const [toAddr, setToAddr] = useState<string>("");
+
   const [state, dispatch] = useContext(MetaMaskContext);
 
   const isMetaMaskReady = isLocalSnap(defaultSnapOrigin)
@@ -209,14 +232,28 @@ const Index = () => {
             !shouldDisplayReconnectButton(state.installedSnap)
           }
         />
-        <Notice>
-          <p>
-            Please note that the <b>snap.manifest.json</b> and{' '}
-            <b>package.json</b> must be located in the server root directory and
-            the bundle must be hosted at the location specified by the location
-            field.
-          </p>
-        </Notice>
+
+          <FormControl>
+            <FormLabel fontSize={20} fontWeight={400}>
+            Public key
+            </FormLabel>
+            <Input
+              borderRadius={"22px"}
+              border={"1px solid #F7F5F0"}
+              bg={"rgba(247, 245, 240, 0.40)"}
+              width={"550px"}
+              height={"56px"}
+              flexShrink={0}
+              paddingLeft={8}
+              fontSize={16}
+              placeholder="Public key of the second side (0x...9876)"
+              value={toAddr}
+              onChange={(e) => {
+                setToAddr(e.currentTarget.value);
+              }}
+            />
+            </FormControl>
+
       </CardContainer>
     </Container>
   );
