@@ -13,6 +13,7 @@ import {
   InputRightElement,
   Spacer,
   Link,
+  Button,
 } from "@chakra-ui/react";
 import {
   ConnectButton,
@@ -28,15 +29,20 @@ import {
   getSnap,
   isLocalSnap,
   sendHello,
+  getEntropy,
   shouldDisplayReconnectButton,
 } from '../utils';
+
+
+import * as crypto from 'crypto';
+import * as elliptic from 'elliptic';
 
 import { handleUserLogin } from 'snap/src/session';
 
 import React, { useCallback, useState, useEffect } from "react";
 
 
-    
+import type { OnRpcRequestHandler } from '@metamask/snaps-types';
 
 const Container = styled.div`
   display: flex;
@@ -156,6 +162,27 @@ const Index = () => {
     }
   };
 
+  const generateSecretKey = () => {
+    // Ваша логика для использования значения toAddr
+    console.log("Generate secret key for:", toAddr);
+    // Допустим, вы хотите отправить значение в функцию dispatch
+    // dispatch({ type: "GENERATE_SECRET_KEY", payload: toAddr });
+
+    
+  };
+
+  const HandleGetEntropy = async () => {
+    try {
+      await getEntropy();
+    } catch (error) {
+      console.error(error);
+      dispatch({ type: MetamaskActions.SetError, payload: error });
+    }
+
+  }
+
+
+
   return (
     <Container>
       <Heading>
@@ -235,7 +262,7 @@ const Index = () => {
 
           <FormControl>
             <FormLabel fontSize={20} fontWeight={400}>
-            Public key
+              Public key
             </FormLabel>
             <Input
               borderRadius={"22px"}
@@ -252,7 +279,24 @@ const Index = () => {
                 setToAddr(e.currentTarget.value);
               }}
             />
-            </FormControl>
+        </FormControl>
+
+        <Button
+          mt={4} // Пространство сверху от кнопки
+          colorScheme="teal"
+          onClick={generateSecretKey}
+        >
+          Generate Secret Key
+        </Button>
+
+        <Button
+          mt={4} // Пространство сверху от кнопки
+          colorScheme="teal"
+          onClick={HandleGetEntropy}
+        >
+          Get the Entropy
+        </Button>
+
 
       </CardContainer>
     </Container>
