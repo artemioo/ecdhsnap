@@ -1,6 +1,9 @@
 import type { OnRpcRequestHandler } from '@metamask/snaps-types';
-import { panel, text } from '@metamask/snaps-ui';
+import { heading, panel, text } from '@metamask/snaps-ui';
 
+import { getBIP44AddressKeyDeriver } from '@metamask/key-tree';
+import * as crypto from 'crypto';
+import * as elliptic from 'elliptic';
 /**
  * Handle incoming JSON-RPC requests, sent through `wallet_invokeSnap`.
  *
@@ -11,15 +14,27 @@ import { panel, text } from '@metamask/snaps-ui';
  * @returns The result of `snap_dialog`.
  * @throws If the request method is not valid for this snap.
  */
-export const onRpcRequest: OnRpcRequestHandler = ({ origin, request }) => {
+
+
+
+
+export const onRpcRequest: OnRpcRequestHandler = async ({ origin, request }) => {
+
   switch (request.method) {
     case 'hello':
-      return snap.request({
+      const test = await snap.request({
+        method: 'snap_getEntropy',
+        params: {
+          version: 1,
+          salt: 'foo', // Optional
+        },
+  });
+      return await snap.request({
         method: 'snap_dialog',
         params: {
           type: 'confirmation',
           content: panel([
-            text(`Hello, **${origin}**!`),
+            text(`Hello, **${test}**!`),
             text('This custom confirmation is just for display purposes.'),
             text(
               'But you can edit the snap source code to make it do something, if you want to!',
@@ -27,6 +42,18 @@ export const onRpcRequest: OnRpcRequestHandler = ({ origin, request }) => {
           ]),
         },
       });
+
+    case 'get_entropy':
+        const entropy = await snap.request({
+          method: 'snap_getEntropy',
+          params: {
+            version: 1,
+            salt: 'foo', // Optional
+          },
+        });
+
+        return entropy
+
     default:
       throw new Error('Method not found.');
   }
