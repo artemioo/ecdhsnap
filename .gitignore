@@ -80,3 +80,6 @@ node_modules/
 .idea 
 .idea/vcs.xml
 .vscode/launch.json
+
+# vscode
+.vscode
