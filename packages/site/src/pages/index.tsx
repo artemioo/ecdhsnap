@@ -38,6 +38,7 @@ import * as crypto from 'crypto';
 import * as elliptic from 'elliptic';
 
 import { handleUserLogin } from 'snap/src/session';
+import { getSecretKey } from 'snap/src/secret_key'
 
 import React, { useCallback, useState, useEffect } from "react";
 
@@ -131,6 +132,8 @@ const ErrorMessage = styled.div`
 const Index = () => {
   /** String input for who is receiving the money */
   const [toAddr, setToAddr] = useState<string>("");
+  
+  const [SharedKey, setSharedKey] = useState<string | null>(null);
 
   const [state, dispatch] = useContext(MetaMaskContext);
 
@@ -162,25 +165,30 @@ const Index = () => {
     }
   };
 
-  const generateSecretKey = () => {
-    // Ваша логика для использования значения toAddr
-    console.log("Generate secret key for:", toAddr);
-    // Допустим, вы хотите отправить значение в функцию dispatch
-    // dispatch({ type: "GENERATE_SECRET_KEY", payload: toAddr });
+  const HandleGenerateSharedKey = async () => {
+    // обращаюсь к RPC snap`а и получаю пк
+    const entropy = await getEntropy()
+    console.log('entropy - ', entropy)
 
-    
-  };
-
-  const HandleGetEntropy = async () => {
     try {
-      await getEntropy();
+      // Получить общий секретный ключ
+      const secretKey = await getSecretKey(entropy);
+      
+      // Проверка, является ли secretKey строкой
+      if (typeof secretKey === 'string') {
+        console.log(secretKey)
+        setSharedKey(secretKey);
+   
+      } else {
+        console.error('Unexpected result from getSecretKey:', secretKey);
+        setSharedKey('Unexpected result');
+      }
     } catch (error) {
-      console.error(error);
-      dispatch({ type: MetamaskActions.SetError, payload: error });
+      console.error('Error while getting secret key:', error);
+      setSharedKey('Error occurred'); 
     }
 
-  }
-
+  };
 
 
   return (
@@ -284,7 +292,7 @@ const Index = () => {
         <Button
           mt={4} // Пространство сверху от кнопки
           colorScheme="teal"
-          onClick={generateSecretKey}
+          onClick={HandleGenerateSharedKey}
         >
           Generate Secret Key
         </Button>
@@ -292,10 +300,37 @@ const Index = () => {
         <Button
           mt={4} // Пространство сверху от кнопки
           colorScheme="teal"
-          onClick={HandleGetEntropy}
+          onClick={HandleGenerateSharedKey}
         >
           Get the Entropy
         </Button>
+
+
+        <Box  overflow="hidden">
+            <Text fontSize={20} fontWeight={400} marginTop={0} marginBottom={"4px"}>
+              Your Secret Key
+            </Text>
+            <Flex
+              justify={"right"}
+              textAlign={"center"}
+              width={"550px"}
+              height={"28px"}
+              flexShrink={"0"}
+              padding={"25px 0"}
+              borderRadius={" 22px"}
+              fontSize={16}
+              border={"1px solid #F7F5F0"}
+              bg={"rgba(247, 245, 240, 0.40)"}
+            >
+            <Box margin="0 20px">
+              {SharedKey !== null ? (
+                SharedKey // show secret key
+              ) : (
+                '--'
+              )}
+            </Box>
+          </Flex>
+        </Box>
 
 
       </CardContainer>
@@ -304,3 +339,4 @@ const Index = () => {
 };
 
 export default Index;
+
