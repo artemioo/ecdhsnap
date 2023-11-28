@@ -4570,6 +4570,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@metamask/types@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@metamask/types@npm:1.1.0"
+  checksum: f1d17e21f6b83aefa9ccedd6489dbabe2508a5990f68a6a872aff5ff23ee8b0f6c7642c062df4689de59e4a535edd7db5647e7e15d99ecf39ceb55b36cba94c6
+  languageName: node
+  linkType: hard
+
 "@metamask/utils@npm:^5.0.0":
   version: 5.0.2
   resolution: "@metamask/utils@npm:5.0.2"
@@ -6208,6 +6215,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/bn.js@npm:*":
+  version: 5.1.5
+  resolution: "@types/bn.js@npm:5.1.5"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 9719330c86aeae0a6a447c974cf0f853ba3660ede20de61f435b03d699e30e6d8b35bf71a8dc9fdc8317784438e83177644ba068ed653d0ae0106e1ecbfe289e
+  languageName: node
+  linkType: hard
+
 "@types/bn.js@npm:^5.1.0":
   version: 5.1.1
   resolution: "@types/bn.js@npm:5.1.1"
@@ -6279,6 +6295,15 @@ __metadata:
   version: 1.1.0
   resolution: "@types/deep-freeze-strict@npm:1.1.0"
   checksum: fca4a6076f74d779dfa2600c0e574f8da2304e4cebd105d5b0f6d8665009da8437956cf9c806fedb09e5485005de46fcdb951c99eccd0a42dc71dc4ecf15ed26
+  languageName: node
+  linkType: hard
+
+"@types/elliptic@npm:^6":
+  version: 6.4.18
+  resolution: "@types/elliptic@npm:6.4.18"
+  dependencies:
+    "@types/bn.js": "npm:*"
+  checksum: 06493e18167a581fa48d3c0f7034b9ad107993610767d5251ae2788be4bc5bdeda292d9ae18bbf366faa4a492eb669fc31060392f79bd5fdccb4efbd729ae66a
   languageName: node
   linkType: hard
 
@@ -19959,8 +19984,12 @@ __metadata:
     "@metamask/eslint-config-jest": "npm:^12.0.0"
     "@metamask/eslint-config-nodejs": "npm:^12.0.0"
     "@metamask/eslint-config-typescript": "npm:^12.0.0"
+    "@metamask/snaps-ui": "npm:^3.1.0"
+    "@metamask/types": "npm:^1.1.0"
+    "@types/elliptic": "npm:^6"
     "@typescript-eslint/eslint-plugin": "npm:^5.42.1"
     "@typescript-eslint/parser": "npm:^5.42.1"
+    elliptic: "npm:^6.5.4"
     eslint: "npm:^8.45.0"
     eslint-config-prettier: "npm:^8.5.0"
     eslint-plugin-import: "npm:~2.26.0"
