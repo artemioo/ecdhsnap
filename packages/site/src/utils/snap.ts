@@ -70,10 +70,10 @@ export const sendHello = async () => {
  * Get Entropy from the this snap.
  */
 export const getEntropy = async () => {
-  console.log('перед методом');
-  await window.ethereum.request({
+
+  return await window.ethereum.request({
     method: 'wallet_invokeSnap',
-    params: { snapId: defaultSnapOrigin, request: { method: 'get_entropy' } },
+    params: { snapId: defaultSnapOrigin, request: { method: 'get_secret_key' } },
   });
 };
 
