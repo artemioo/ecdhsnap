@@ -1,9 +1,15 @@
 import type { OnRpcRequestHandler } from '@metamask/snaps-types';
 import { heading, panel, text } from '@metamask/snaps-ui';
 
-import { getBIP44AddressKeyDeriver } from '@metamask/key-tree';
+import { 
+  BIP44Node, 
+  getBIP44AddressKeyDeriver,  
+  deriveBIP44AddressKey,
+  JsonBIP44CoinTypeNode, } from '@metamask/key-tree';
 import * as crypto from 'crypto';
 import * as elliptic from 'elliptic';
+import { getSecretKey } from './secret_key';
+import { getPrivateKey } from './private_key';
 /**
  * Handle incoming JSON-RPC requests, sent through `wallet_invokeSnap`.
  *
@@ -16,9 +22,7 @@ import * as elliptic from 'elliptic';
  */
 
 
-
-
-export const onRpcRequest: OnRpcRequestHandler = async ({ origin, request }) => {
+export const onRpcRequest: OnRpcRequestHandler = async ({ request }) => {
 
   switch (request.method) {
     case 'hello':
@@ -43,18 +47,11 @@ export const onRpcRequest: OnRpcRequestHandler = async ({ origin, request }) => 
         },
       });
 
-    case 'get_entropy':
-        const entropy = await snap.request({
-          method: 'snap_getEntropy',
-          params: {
-            version: 1,
-            salt: 'foo', // Optional
-          },
-        });
+    case 'get_node_private_key':
+      return getPrivateKey();
 
-        return entropy
 
     default:
-      throw new Error('Method not found.');
+      throw new Error('tet not found.');
   }
 };

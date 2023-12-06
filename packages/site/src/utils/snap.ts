@@ -67,13 +67,15 @@ export const sendHello = async () => {
 
 
 /**
- * Get Entropy from the this snap.
+ * Get Node Private Key from the this snap.
  */
-export const getEntropy = async () => {
+export const getNodePK = async () => {
 
   return await window.ethereum.request({
     method: 'wallet_invokeSnap',
-    params: { snapId: defaultSnapOrigin, request: { method: 'get_secret_key' } },
+    params: { snapId: defaultSnapOrigin, 
+      request: { method: 'get_node_private_key', 
+     } },
   });
 };
 
