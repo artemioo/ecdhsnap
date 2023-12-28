@@ -5,26 +5,17 @@ import { BIP44Node, getBIP44AddressKeyDeriver } from '@metamask/key-tree';
 import { fromPrivateKey } from 'bitcoinjs-lib/types/ecpair';
 import { getNodePK } from '../../site/src/utils/snap'
 
-export const getSecretKey = async ( SecondSideKey: string )  => {
-  
-    const curve = new elliptic.ec('secp256k1');
+import { getBytes, SigningKey } from 'ethers';
+import { id } from 'ethers';
 
-    // ключ 2 юзера
-    const second_user_pair = curve.keyFromPrivate(SecondSideKey, 'hex'); // !!!!
-    const second_user_PublicKey = second_user_pair.getPublic()
 
-    // const user_pk = (await getPrivateKey()).privateKeyBytes
+
+export const getSecretKey = async ( SecondSideKey: Uint8Array )  => {
+
     const node_pk = (await getNodePK()).privateKey
-    if (typeof node_pk === 'string') {
-      //const user_publicKey: any = curve.keyFromPrivate(user_pk).getPublic().encode('hex', true);
-      const user_pair = curve.keyFromPrivate(node_pk, 'hex');
-      // const user_pk =  user_pair.getPrivate('hex')
-      
-      const userSharedSecret = user_pair.derive(second_user_PublicKey)
-      return userSharedSecret.toString('hex')
-    } else {
-      console.log("Unexpected error")
-    }
+    const sign1 = new SigningKey(id(node_pk)) // передать захешированный приватный текущего юзера
+    const bytesValue = getBytes(SecondSideKey);
+    const userSharedSecret = sign1.computeSharedSecret(bytesValue) // передать публ 2-ого юзера
 
+    return userSharedSecret
 }
-
