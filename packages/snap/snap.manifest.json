@@ -1,13 +1,13 @@
 {
   "version": "0.1.0",
   "description": "Simple Snap to generate a secret key with ECDH",
-  "proposedName": "ECDH Snap",
+  "proposedName": "ECDH Master",
   "repository": {
     "type": "git",
     "url": "https://github.com/MetaMask/template-snap-monorepo.git"
   },
   "source": {
-    "shasum": "rRT2QQ8QfxN3eNN1RXtvFw9y3hYL7vl4xJpzTmN/TyQ=",
+    "shasum": "sSZ4c1+9XhD/BRTzeRGizCSaVOqRxuL1ssCo4Rl0dDs=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
@@ -21,11 +21,6 @@
     "snap_dialog": {},
     "snap_getEntropy": {},
     "snap_notify": {},
-    "snap_getBip44Entropy": [
-      {
-        "coinType": 1
-      }
-    ],
     "snap_getBip32PublicKey": [
       {
         "path": [
@@ -42,7 +37,13 @@
     "endowment:rpc": {
       "dapps": true,
       "snaps": false
-    }
+    },
+    "endowment:network-access": {},
+    "snap_getBip44Entropy": [
+      {
+        "coinType": 1
+      }
+    ]
   },
   "manifestVersion": "0.1"
 }

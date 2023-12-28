@@ -60,6 +60,7 @@
     }
   },
   "dependencies": {
+    "@metamask/key-tree": "^9.0.0",
     "@metamask/snaps-ui": "^3.1.0",
     "@metamask/types": "^1.1.0",
     "elliptic": "^6.5.4"
