@@ -6,13 +6,8 @@ import {
   FormControl,
   FormLabel,
   Box,
-  InputGroup,
   Text,
-  SimpleGrid,
   Flex,
-  InputRightElement,
-  Spacer,
-  Link,
   Button,
 } from "@chakra-ui/react";
 import {
@@ -29,21 +24,13 @@ import {
   getSnap,
   isLocalSnap,
   sendHello,
-  getEntropy,
   shouldDisplayReconnectButton,
 } from '../utils';
 
 
-import * as crypto from 'crypto';
-import * as elliptic from 'elliptic';
-
-import { handleUserLogin } from 'snap/src/session';
 import { getSecretKey } from 'snap/src/secret_key'
 
 import React, { useCallback, useState, useEffect } from "react";
-
-
-import type { OnRpcRequestHandler } from '@metamask/snaps-types';
 
 const Container = styled.div`
   display: flex;
@@ -130,11 +117,11 @@ const ErrorMessage = styled.div`
 `;
 
 const Index = () => {
-  /** String input for who is receiving the money */
-  const [toAddr, setToAddr] = useState<string>("");
+  /** String input for Second Side */
+  const [SecondSide_key, setSecondSide_key] = useState<string>("");
   
   const [SharedKey, setSharedKey] = useState<string | null>(null);
-
+  
   const [state, dispatch] = useContext(MetaMaskContext);
 
   const isMetaMaskReady = isLocalSnap(defaultSnapOrigin)
@@ -165,18 +152,47 @@ const Index = () => {
     }
   };
 
+
+  const getPublicKey = async (name: string): Promise<Uint8Array> => {
+    // request to my backend
+    const url = `http://127.0.0.1:8000/get_pub_key/${name}`;
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch data: ${response.statusText}`);
+      }
+  
+      // const data = await response.json();
+
+      const data = await response.arrayBuffer();
+      const byteArray = new Uint8Array(data);
+
+   
+      return byteArray
+      
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      throw error;
+    }
+  };
+
   const HandleGenerateSharedKey = async () => {
     // обращаюсь к RPC snap`а и получаю пк
-    const entropy = await getEntropy()
-    console.log('entropy - ', entropy)
+
+    // console.log('second - ', SecondSide_key)
+
+    const second_user_pk = await getPublicKey(SecondSide_key)
+    console.log('публ ключ 2 юзера: ', second_user_pk) 
+    const entropy = await getSecretKey(second_user_pk)
 
     try {
       // Получить общий секретный ключ
-      const secretKey = await getSecretKey(entropy);
+      const secretKey = entropy
+      console.log('общий секретный - ' ,secretKey)
       
       // Проверка, является ли secretKey строкой
       if (typeof secretKey === 'string') {
-        console.log(secretKey)
+        // console.log('secretKey - ', secretKey)
         setSharedKey(secretKey);
    
       } else {
@@ -194,11 +210,8 @@ const Index = () => {
   return (
     <Container>
       <Heading>
-        Welcome to <Span>template-snap</Span>
+        Welcome to <Span>ECDH Master</Span>
       </Heading>
-      <Subtitle>
-        Get started by editing <code>src/index.ts</code>
-      </Subtitle>
       <CardContainer>
         {state.error && (
           <ErrorMessage>
@@ -269,8 +282,8 @@ const Index = () => {
         />
 
           <FormControl>
-            <FormLabel fontSize={20} fontWeight={400}>
-              Public key
+            <FormLabel fontSize={20} fontWeight={400} marginBottom={"10px"}>
+            Second Side's Name
             </FormLabel>
             <Input
               borderRadius={"22px"}
@@ -281,46 +294,39 @@ const Index = () => {
               flexShrink={0}
               paddingLeft={8}
               fontSize={16}
-              placeholder="Public key of the second side (0x...9876)"
-              value={toAddr}
+              placeholder="for example: Bob"
+              value={SecondSide_key}
               onChange={(e) => {
-                setToAddr(e.currentTarget.value);
+                setSecondSide_key(e.currentTarget.value);
               }}
             />
         </FormControl>
 
         <Button
-          mt={4} // Пространство сверху от кнопки
+          mt={9} 
           colorScheme="teal"
           onClick={HandleGenerateSharedKey}
         >
           Generate Secret Key
         </Button>
 
-        <Button
-          mt={4} // Пространство сверху от кнопки
-          colorScheme="teal"
-          onClick={HandleGenerateSharedKey}
-        >
-          Get the Entropy
-        </Button>
-
 
         <Box  overflow="hidden">
-            <Text fontSize={20} fontWeight={400} marginTop={0} marginBottom={"4px"}>
+            <Text fontSize={20} fontWeight={400} marginTop={5} marginBottom={"4px"}>
               Your Secret Key
             </Text>
             <Flex
               justify={"right"}
               textAlign={"center"}
-              width={"550px"}
-              height={"28px"}
+              width={"580px"}
+              height={"58px"}
               flexShrink={"0"}
               padding={"25px 0"}
-              borderRadius={" 22px"}
+              borderRadius={"22px"}
               fontSize={16}
               border={"1px solid #F7F5F0"}
               bg={"rgba(247, 245, 240, 0.40)"}
+
             >
             <Box margin="0 20px">
               {SharedKey !== null ? (
