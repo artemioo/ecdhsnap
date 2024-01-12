@@ -183,11 +183,11 @@ const Index = () => {
 
     const second_user_pk = await getPublicKey(SecondSide_key)
     console.log('публ ключ 2 юзера: ', second_user_pk) 
-    const entropy = await getSecretKey(second_user_pk)
+    const secret = await getSecretKey(second_user_pk)
 
     try {
       // Получить общий секретный ключ
-      const secretKey = entropy
+      const secretKey = secret
       console.log('общий секретный - ' ,secretKey)
       
       // Проверка, является ли secretKey строкой
