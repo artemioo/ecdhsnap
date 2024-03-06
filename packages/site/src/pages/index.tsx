@@ -2,24 +2,20 @@ import { useContext } from 'react';
 import styled from 'styled-components';
 import {
   Input,
-  Spinner,
   FormControl,
   FormLabel,
-  Box,
-  Text,
-  Flex,
   Button,
 } from "@chakra-ui/react";
 import {
   ConnectButton,
   InstallFlaskButton,
   ReconnectButton,
-  SendHelloButton,
   Card,
 } from '../components';
 import { defaultSnapOrigin } from '../config';
 import { MetamaskActions, MetaMaskContext } from '../hooks';
 import {
+  GenerateKeys,
   connectSnap,
   getSnap,
   isLocalSnap,
@@ -28,9 +24,10 @@ import {
 } from '../utils';
 
 
-import { getSecretKey } from 'snap/src/secret_key'
 
 import React, { useCallback, useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
+import Web3Provider from 'ethers';
 
 const Container = styled.div`
   display: flex;
@@ -72,7 +69,8 @@ const CardContainer = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
   max-width: 64.8rem;
   width: 100%;
   height: 100%;
@@ -117,11 +115,10 @@ const ErrorMessage = styled.div`
 `;
 
 const Index = () => {
-  /** String input for Second Side */
-  const [SecondSide_key, setSecondSide_key] = useState<string>("");
-  
-  const [SharedKey, setSharedKey] = useState<string | null>(null);
-  
+  const navigate = useNavigate();
+
+  const [UserName, setUserName] = useState<string>("");
+  const [UserAddress, setUserAddress] = useState<string>("");
   const [state, dispatch] = useContext(MetaMaskContext);
 
   const isMetaMaskReady = isLocalSnap(defaultSnapOrigin)
@@ -143,66 +140,73 @@ const Index = () => {
     }
   };
 
-  const handleSendHelloClick = async () => {
+/*   const handleSendHelloClick = async () => {
     try {
       await sendHello();
     } catch (error) {
       console.error(error);
       dispatch({ type: MetamaskActions.SetError, payload: error });
     }
-  };
+  }; */
 
 
-  const getPublicKey = async (name: string): Promise<Uint8Array> => {
-    // request to my backend
-    const url = `http://127.0.0.1:8000/get_pub_key/${name}`;
+  const HandleCreateUser = async () => {
+
+    const pub_key = await GenerateKeys() 
+
+
+    const params = {
+      username: UserName,
+      address: UserAddress,
+      pubkey: pub_key
+    }
+
+    const url = `http://localhost:8100/user/create`;
     try {
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(params) 
+      });
+    
       if (!response.ok) {
         throw new Error(`Failed to fetch data: ${response.statusText}`);
       }
-  
-      // const data = await response.json();
-
-      const data = await response.arrayBuffer();
-      const byteArray = new Uint8Array(data);
-
-   
-      return byteArray
       
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      throw error;
-    }
-  };
+      const UserId = await response.json();
+    
+      if (UserId) {
+        const url_s = `http://localhost:8100/login`;
+        try {
+          const response_s = await fetch(url_s, {
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ Id: UserId }) 
+          });
+          
+          const response_s_data = await response_s.json() 
+          localStorage.setItem('session-id', response_s_data.session_id);
 
-  const HandleGenerateSharedKey = async () => {
-    // обращаюсь к RPC snap`а и получаю пк
-
-    // console.log('second - ', SecondSide_key)
-
-    const second_user_pk = await getPublicKey(SecondSide_key)
-    console.log('публ ключ 2 юзера: ', second_user_pk) 
-    const secret = await getSecretKey(second_user_pk)
-
-    try {
-      // Получить общий секретный ключ
-      const secretKey = secret
-      console.log('общий секретный - ' ,secretKey)
-      
-      // Проверка, является ли secretKey строкой
-      if (typeof secretKey === 'string') {
-        // console.log('secretKey - ', secretKey)
-        setSharedKey(secretKey);
-   
+          if (!response_s.ok) {
+            throw new Error(`Failed to fetch data: ${response_s.statusText}`);
+          }
+          
+        } catch (error) {
+          console.error('login fetch error:', error);
+        }
       } else {
-        console.error('Unexpected result from getSecretKey:', secretKey);
-        setSharedKey('Unexpected result');
+        console.error('Failed to get User ID');
       }
     } catch (error) {
-      console.error('Error while getting secret key:', error);
-      setSharedKey('Error occurred'); 
+      console.error('User Create fetch error:', error);
     }
+
+    navigate("/")
 
   };
 
@@ -234,7 +238,7 @@ const Index = () => {
             content={{
               title: 'Connect',
               description:
-                'Get started by connecting to and installing the example snap.',
+                'Get started by connecting to and installing the ECDH snap.',
               button: (
                 <ConnectButton
                   onClick={handleConnectClick}
@@ -261,29 +265,11 @@ const Index = () => {
             disabled={!state.installedSnap}
           />
         )}
-        <Card
-          content={{
-            title: 'Send Hello message',
-            description:
-              'Display a custom message within a confirmation screen in MetaMask.',
-            button: (
-              <SendHelloButton
-                onClick={handleSendHelloClick}
-                disabled={!state.installedSnap}
-              />
-            ),
-          }}
-          disabled={!state.installedSnap}
-          fullWidth={
-            isMetaMaskReady &&
-            Boolean(state.installedSnap) &&
-            !shouldDisplayReconnectButton(state.installedSnap)
-          }
-        />
+
 
           <FormControl>
             <FormLabel fontSize={20} fontWeight={400} marginBottom={"10px"}>
-            Second Side's Name
+            Your Name
             </FormLabel>
             <Input
               borderRadius={"22px"}
@@ -295,49 +281,43 @@ const Index = () => {
               paddingLeft={8}
               fontSize={16}
               placeholder="for example: Bob"
-              value={SecondSide_key}
+              value={UserName}
               onChange={(e) => {
-                setSecondSide_key(e.currentTarget.value);
+                setUserName(e.currentTarget.value);
               }}
             />
+          
+        </FormControl>
+
+        <FormControl>
+            <FormLabel fontSize={20} fontWeight={400} marginBottom={"10px"}>
+            Your Address
+            </FormLabel>
+            <Input
+              borderRadius={"22px"}
+              border={"1px solid #F7F5F0"}
+              bg={"rgba(247, 245, 240, 0.40)"}
+              width={"550px"}
+              height={"56px"}
+              flexShrink={0}
+              paddingLeft={8}
+              fontSize={16}
+              placeholder="for example: 0xAbCdEf012...  "
+              value={UserAddress}
+              onChange={(e) => {
+                setUserAddress(e.currentTarget.value);
+              }}
+            />
+          
         </FormControl>
 
         <Button
-          mt={9} 
+          mt={20} 
           colorScheme="teal"
-          onClick={HandleGenerateSharedKey}
+          onClick={HandleCreateUser}
         >
-          Generate Secret Key
+          Let`s start
         </Button>
-
-
-        <Box  overflow="hidden">
-            <Text fontSize={20} fontWeight={400} marginTop={5} marginBottom={"4px"}>
-              Your Secret Key
-            </Text>
-            <Flex
-              justify={"right"}
-              textAlign={"center"}
-              width={"580px"}
-              height={"58px"}
-              flexShrink={"0"}
-              padding={"25px 0"}
-              borderRadius={"22px"}
-              fontSize={16}
-              border={"1px solid #F7F5F0"}
-              bg={"rgba(247, 245, 240, 0.40)"}
-
-            >
-            <Box margin="0 20px">
-              {SharedKey !== null ? (
-                SharedKey // show secret key
-              ) : (
-                '--'
-              )}
-            </Box>
-          </Flex>
-        </Box>
-
 
       </CardContainer>
     </Container>
