@@ -5625,6 +5625,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@remix-run/router@npm:1.15.0":
+  version: 1.15.0
+  resolution: "@remix-run/router@npm:1.15.0"
+  checksum: 5cadae0c90874966ebd6b1b202284a337da32a68fc95af502859cd6158d3c254fbb4f76fa1844c837205dbc8a8120223360b9287a3d6aa0c747d02767c4c072c
+  languageName: node
+  linkType: hard
+
 "@remix-run/router@npm:1.6.3":
   version: 1.6.3
   resolution: "@remix-run/router@npm:1.6.3"
@@ -10078,6 +10085,13 @@ __metadata:
     randombytes: "npm:^2.0.0"
     randomfill: "npm:^1.0.3"
   checksum: 5ab534474e24c8c3925bd1ec0de57c9022329cb267ca8437f1e3a7200278667c0bea0a51235030a9da3165c1885c73f51cfbece1eca31fd4a53cfea23f628c9b
+  languageName: node
+  linkType: hard
+
+"crypto-js@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "crypto-js@npm:4.2.0"
+  checksum: c7bcc56a6e01c3c397e95aa4a74e4241321f04677f9a618a8f48a63b5781617248afb9adb0629824792e7ec20ca0d4241a49b6b2938ae6f973ec4efc5c53c924
   languageName: node
   linkType: hard
 
@@ -19552,6 +19566,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-router-dom@npm:^6.22.0":
+  version: 6.22.0
+  resolution: "react-router-dom@npm:6.22.0"
+  dependencies:
+    "@remix-run/router": "npm:1.15.0"
+    react-router: "npm:6.22.0"
+  peerDependencies:
+    react: ">=16.8"
+    react-dom: ">=16.8"
+  checksum: 32ba0386d400354094116fa7dd98f1d23bc7cf683b0f4509694be5f730d4957fcb8cc73e35946576fc3f48b4d36743422f1b9bcdc37ad77f04bde0bde5d9102e
+  languageName: node
+  linkType: hard
+
 "react-router@npm:6.13.0":
   version: 6.13.0
   resolution: "react-router@npm:6.13.0"
@@ -19560,6 +19587,17 @@ __metadata:
   peerDependencies:
     react: ">=16.8"
   checksum: 8c2882013cbaef440407736d99361290de57b0645b8626f4dabadc08ed3cee4615c481c48d6c1f54180b2871ab2d92ea4b666f917689a66fa429365ccd969f6e
+  languageName: node
+  linkType: hard
+
+"react-router@npm:6.22.0":
+  version: 6.22.0
+  resolution: "react-router@npm:6.22.0"
+  dependencies:
+    "@remix-run/router": "npm:1.15.0"
+  peerDependencies:
+    react: ">=16.8"
+  checksum: 627c25533667da0c8008587208e0d5633409173969fd579de706cde355465f6d1245e2b1a7ca2adeb96201f2858932b59ce3402482786cd20c4bf278562976dd
   languageName: node
   linkType: hard
 
@@ -20193,6 +20231,7 @@ __metadata:
     "@types/elliptic": "npm:^6"
     "@typescript-eslint/eslint-plugin": "npm:^5.42.1"
     "@typescript-eslint/parser": "npm:^5.42.1"
+    crypto-js: "npm:^4.2.0"
     elliptic: "npm:^6.5.4"
     eslint: "npm:^8.45.0"
     eslint-config-prettier: "npm:^8.5.0"
@@ -20204,6 +20243,7 @@ __metadata:
     eslint-plugin-promise: "npm:^6.1.1"
     prettier: "npm:^2.7.1"
     prettier-plugin-packagejson: "npm:^2.2.18"
+    react-router-dom: "npm:^6.22.0"
     sharp: "npm:^0.30.7"
     typescript: "npm:^4.7.4"
   languageName: unknown
