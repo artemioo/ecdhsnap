@@ -1,15 +1,7 @@
 import type { OnRpcRequestHandler } from '@metamask/snaps-types';
 import { heading, panel, text } from '@metamask/snaps-ui';
-
-import { 
-  BIP44Node, 
-  getBIP44AddressKeyDeriver,  
-  deriveBIP44AddressKey,
-  JsonBIP44CoinTypeNode, } from '@metamask/key-tree';
-import * as crypto from 'crypto';
-import * as elliptic from 'elliptic';
-import { getSecretKey } from './secret_key';
-import { getPrivateKey } from './private_key';
+import { CheckSharedSecret, CreateSharedSecret, DeсryptMessage, EnсryptMessage } from './shared_secret';
+import { GenerateNewPair} from './generate_keys';
 /**
  * Handle incoming JSON-RPC requests, sent through `wallet_invokeSnap`.
  *
@@ -23,22 +15,15 @@ import { getPrivateKey } from './private_key';
 
 
 export const onRpcRequest: OnRpcRequestHandler = async ({ request }) => {
-
+  const requestData = request.params
   switch (request.method) {
-    case 'hello':
-      const test = await snap.request({
-        method: 'snap_getEntropy',
-        params: {
-          version: 1,
-          salt: 'foo', // Optional
-        },
-  });
+    case 'hello': 
       return await snap.request({
         method: 'snap_dialog',
         params: {
           type: 'confirmation',
           content: panel([
-            text(`Hello, **${test}**!`),
+            text(`Hello!`),
             text('This custom confirmation is just for display purposes.'),
             text(
               'But you can edit the snap source code to make it do something, if you want to!',
@@ -47,11 +32,18 @@ export const onRpcRequest: OnRpcRequestHandler = async ({ request }) => {
         },
       });
 
-    case 'get_node_private_key':
-      return getPrivateKey();
-
+    case 'GenerateKeys':
+      return GenerateNewPair()
+    case 'CheckSharedSecret':
+      return CheckSharedSecret(requestData.partnerName)
+    case 'CreateSharedSecret':
+     return CreateSharedSecret(requestData.partnerName, requestData.PubKey)
+    case 'EnсryptMessage':
+    return EnсryptMessage(requestData.partnerName, requestData.message)
+    case 'DeсryptMessage':
+    return DeсryptMessage(requestData.partnerName, requestData.ciphertext)
 
     default:
-      throw new Error('tet not found.');
+      throw new Error('Method not found.');
   }
 };

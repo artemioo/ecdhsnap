@@ -57,26 +57,76 @@ export const getSnap = async (version?: string): Promise<Snap | undefined> => {
  * Invoke the "hello" method from the example snap.
  */
 
-export const sendHello = async () => {
+/* export const sendHello = async () => {
   await window.ethereum.request({
     method: 'wallet_invokeSnap',
     params: { snapId: defaultSnapOrigin, request: { method: 'hello' } },
   });
+}; */
+export const sendHello = async (text: string) => {
+  await window.ethereum.request({
+    method: 'wallet_invokeSnap',
+    params: { snapId: defaultSnapOrigin, request: { method: 'hello', params: {text}}},
+  });
 };
 
 
+// there are Snaps methods:
 
-/**
- * Get Node Private Key from the this snap.
- */
-export const getNodePK = async () => {
+export const GenerateKeys = async () => {
 
   return await window.ethereum.request({
     method: 'wallet_invokeSnap',
     params: { snapId: defaultSnapOrigin, 
-      request: { method: 'get_node_private_key', 
+      request: { method: 'GenerateKeys', 
      } },
   });
 };
+
+export const CheckSharedSecret = async (partnerName: string) => {
+
+  return await window.ethereum.request({
+    method: 'wallet_invokeSnap',
+    params: { 
+      snapId: defaultSnapOrigin, 
+      request: { method: 'CheckSharedSecret', params: { partnerName } } 
+    },
+  });
+};
+
+export const CreateSharedSecret = async (partnerName: string, PubKey: string) => {
+
+  return await window.ethereum.request({
+    method: 'wallet_invokeSnap',
+    params: { 
+      snapId: defaultSnapOrigin, 
+      request: { method: 'CreateSharedSecret', params: { partnerName, PubKey } } 
+    },
+  });
+};
+
+
+export const EnсryptMessage = async (partnerName: string,message: string) => {
+
+  return await window.ethereum.request({
+    method: 'wallet_invokeSnap',
+    params: { 
+      snapId: defaultSnapOrigin, 
+      request: { method: 'EnсryptMessage', params: { partnerName, message } }
+    },
+  });
+};
+
+export const DeсryptMessage = async (partnerName: string, ciphertext: string) => {
+
+  return await window.ethereum.request({
+    method: 'wallet_invokeSnap',
+    params: { 
+      snapId: defaultSnapOrigin, 
+      request: { method: 'DeсryptMessage', params: { partnerName, ciphertext }} 
+    },
+  });
+};
+
 
 export const isLocalSnap = (snapId: string) => snapId.startsWith('local:');
