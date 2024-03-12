@@ -1,7 +1,7 @@
 import type { OnRpcRequestHandler } from '@metamask/snaps-types';
 import { heading, panel, text } from '@metamask/snaps-ui';
-import { CheckSharedSecret, CreateSharedSecret, DeсryptMessage, EnсryptMessage } from './shared_secret';
-import { GenerateNewPair} from './generate_keys';
+import { DeсryptMessage, EnсryptMessage } from './shared_secret';
+import { GenerateNewPair, GetPublicKey} from './generate_keys';
 /**
  * Handle incoming JSON-RPC requests, sent through `wallet_invokeSnap`.
  *
@@ -34,14 +34,12 @@ export const onRpcRequest: OnRpcRequestHandler = async ({ request }) => {
 
     case 'GenerateKeys':
       return GenerateNewPair()
-    case 'CheckSharedSecret':
-      return CheckSharedSecret(requestData.partnerName)
-    case 'CreateSharedSecret':
-     return CreateSharedSecret(requestData.partnerName, requestData.PubKey)
+    case 'GetPublicKey':
+      return GetPublicKey()
     case 'EnсryptMessage':
-    return EnсryptMessage(requestData.partnerName, requestData.message)
+    return EnсryptMessage(requestData.partnerPubKey, requestData.message)
     case 'DeсryptMessage':
-    return DeсryptMessage(requestData.partnerName, requestData.ciphertext)
+    return DeсryptMessage(requestData.partnerPubKey, requestData.ciphertext)
 
     default:
       throw new Error('Method not found.');

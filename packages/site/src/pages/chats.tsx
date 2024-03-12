@@ -4,12 +4,38 @@ import { MetaMaskContext } from '../hooks';
 import { isLocalSnap,} from '../utils';
 import React, { useCallback, useState, useEffect } from "react";
 import { Link, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  margin-top: 7.6rem;
+  margin-bottom: 7.6rem;
+  ${({ theme }) => theme.mediaQueries.small} {
+    padding-left: 2.4rem;
+    padding-right: 2.4rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    width: auto;
+  }
+`;
+
+const Span = styled.span`
+  color: ${(props) => props.theme.colors.primary?.default};
+`;
 
 const centerStyle = {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
   minHeight: '100vh',
+
+
+  listStyleType: 'none',
+  padding: 0,
+  marginTop: '-230px',
 };
 
 
@@ -21,7 +47,7 @@ export const Chat = () => {
 
     // Check if MetaMask is connected
   if (window.ethereum.isConnected()) {
-    console.log('MetaMask is connected!');
+    //console.log('MetaMask is connected!');
   } else {
     navigate("/login");
   }
@@ -31,7 +57,7 @@ export const Chat = () => {
       : state.snapsDetected;
   
   if (isMetaMaskReady) {
-    console.log('Snap is connected!');
+    //console.log('Snap is connected!');
   } else {
     navigate("/login");
   }
@@ -55,7 +81,6 @@ export const Chat = () => {
         }
 
         const data = await response.json();
-        console.log(data);
         setPairs(data);
         localStorage.setItem("pair_ids", JSON.stringify(data))
       } catch (error) {
@@ -69,14 +94,17 @@ export const Chat = () => {
   return (
     <div style={centerStyle}>
       <div>
-        <h2>Chats:</h2>
+        <h2> <Span> Chats: </Span></h2>
         {pairs.length === 0 ? (
           <p>You have no chats yet</p>
         ) : (
-        <ul>
+          <ul style={{ listStyleType: 'none', padding: 0 }}>
           {Object.values(pairs).map(pair => (
-            <li key={pair.Id}>
-              <p>Name: <Link to={`/chats/${pair.Username}`}>{pair.Username}</Link></p>
+            <li key={pair.Id} style={{ marginBottom: '10px', border: '1px solid #ccc', borderRadius: '5px' }}>
+              <Link to={`/chats/${pair.Username}`} style={{ display: 'block', padding: '10px', textDecoration: 'none', color: 'inherit' }}>
+                <h6 style={{ margin: 0 }}>{pair.Username}</h6>
+
+              </Link>
             </li>
           ))}
         </ul>
