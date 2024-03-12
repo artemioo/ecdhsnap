@@ -16,6 +16,7 @@ import { defaultSnapOrigin } from '../config';
 import { MetamaskActions, MetaMaskContext } from '../hooks';
 import {
   GenerateKeys,
+  GetPublicKey,
   connectSnap,
   getSnap,
   isLocalSnap,
@@ -119,11 +120,34 @@ const Index = () => {
 
   const [UserName, setUserName] = useState<string>("");
   const [UserAddress, setUserAddress] = useState<string>("");
+  const [UserPubKey, setUserPubKey] = useState<string>("");
   const [state, dispatch] = useContext(MetaMaskContext);
 
   const isMetaMaskReady = isLocalSnap(defaultSnapOrigin)
     ? state.isFlask
     : state.snapsDetected;
+
+
+    useEffect(() => {
+      async function getMetaMaskKey() {
+        if (state.installedSnap === undefined) {
+          console.log("snap is not installed", UserPubKey);
+        } else {
+          try {
+            const UserPublicKey = await GetPublicKey();
+            setUserPubKey(UserPublicKey);
+          } catch (error) {
+            console.error("Error fetching public key:", error);
+          }
+        }
+      }
+
+      if (state.installedSnap !== undefined) {
+        getMetaMaskKey();
+      }
+    }, [state.installedSnap]);
+
+
 
   const handleConnectClick = async () => {
     try {
@@ -140,14 +164,7 @@ const Index = () => {
     }
   };
 
-/*   const handleSendHelloClick = async () => {
-    try {
-      await sendHello();
-    } catch (error) {
-      console.error(error);
-      dispatch({ type: MetamaskActions.SetError, payload: error });
-    }
-  }; */
+
 
 
   const HandleCreateUser = async () => {
@@ -160,6 +177,7 @@ const Index = () => {
       address: UserAddress,
       pubkey: pub_key
     }
+
 
     const url = `http://localhost:8100/user/create`;
     try {
@@ -288,27 +306,25 @@ const Index = () => {
             />
           
         </FormControl>
-
         <FormControl>
-            <FormLabel fontSize={20} fontWeight={400} marginBottom={"10px"}>
-            Your Address
+        <FormLabel fontSize={20} fontWeight={400} marginBottom={"15px"}>
+            Your MetaMask Public Key
             </FormLabel>
-            <Input
-              borderRadius={"22px"}
-              border={"1px solid #F7F5F0"}
-              bg={"rgba(247, 245, 240, 0.40)"}
-              width={"550px"}
-              height={"56px"}
-              flexShrink={0}
-              paddingLeft={8}
-              fontSize={16}
-              placeholder="for example: 0xAbCdEf012...  "
-              value={UserAddress}
-              onChange={(e) => {
-                setUserAddress(e.currentTarget.value);
-              }}
-            />
-          
+            <input
+            type="text"
+            readOnly
+            style={{
+              borderRadius: "22px",
+              border: "1px solid #F7F5F0",
+              backgroundColor: "rgba(247, 245, 240, 0.40)",
+              width: "550px",
+              height: "56px",
+              paddingLeft: "8px",
+              fontSize: "16px",
+            }}
+            value={UserPubKey}
+            placeholder='connect the snap please'
+          />
         </FormControl>
 
         <Button
@@ -318,6 +334,7 @@ const Index = () => {
         >
           Let`s start
         </Button>
+
 
       </CardContainer>
     </Container>
