@@ -27,7 +27,9 @@ const Container = styled.div`
     width: auto;
   }
 `;
-
+const Span = styled.span`
+  color: ${(props) => props.theme.colors.primary?.default};
+`;
 
 
 export const ChatWithPartner = () => {
@@ -68,9 +70,23 @@ export const ChatWithPartner = () => {
     if (username) {
     try {
 
+
+      const response = await fetch(`http://localhost:8100/user/${username}`, {
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+    const data = await response.json();
+
       const decryptedMessagesData = {};
       for (const messageId in messages) {
-        decryptedMessagesData[messageId] = await DeсryptMessage(username, messages[messageId].Encrypted_message);
+        decryptedMessagesData[messageId] = await DeсryptMessage(data["pubKey"], messages[messageId].Encrypted_message);
       }
     
       setDecryptedMessages(decryptedMessagesData);
@@ -148,12 +164,14 @@ export const ChatWithPartner = () => {
   }, [pairId]);
 
   return (
-    <Container> 
+    <Container>  
       <div>
+      <h1>Chat with <Span>{username}</Span> </h1>
+
         {isDecrypted ? (
           Object.keys(messages).map(messageId => (
             <div key={messageId}>
-              <p>Decrypted message: {decryptedMessages[messageId]}</p>
+              <p> <strong>Decrypted message: </strong> {decryptedMessages[messageId]}</p>
               <p>Sent at: {messages[messageId].Sent_at}</p>
               <hr />
             </div>
@@ -161,7 +179,7 @@ export const ChatWithPartner = () => {
         ) : (
           Object.keys(messages).map(messageId => (
             <div key={messageId}>
-              <p>Encrypted message: {messages[messageId].Encrypted_message}</p>
+              <p> <strong>   Encrypted message: </strong> {messages[messageId].Encrypted_message}</p>
               <p>Sent at: {messages[messageId].Sent_at}</p>
               <hr />
             </div>
