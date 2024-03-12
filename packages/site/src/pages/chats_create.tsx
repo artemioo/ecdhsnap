@@ -3,9 +3,26 @@ import { MetamaskActions, MetaMaskContext } from '../hooks';
 import { isLocalSnap } from '../utils';
 
 import React, { useCallback, useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
+import styled from 'styled-components';
 
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  margin-top: 7.6rem;
+  margin-bottom: 7.6rem;
+  ${({ theme }) => theme.mediaQueries.small} {
+    padding-left: 2.4rem;
+    padding-right: 2.4rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    width: auto;
+  }
+`;
 
 const centerStyle = {
     display: 'flex',
@@ -15,15 +32,23 @@ const centerStyle = {
     marginTop: '-100px',
   };
   
-  const userListStyle = {
+const userListStyle = {
     listStyle: 'none', 
     fontSize: '2.8rem',
-  };
+};
 
 
 export const CreateChat = () => {
 
-    const [Users, setUsers] = useState([]);
+    interface User {
+      Id: number
+      Username: string
+      Address: string
+      PubKey: string
+    }
+
+    const [Users, setUsers] = useState<User[]>([]);
+    const [filter, setFilter] = useState('');
     const [selectedUser, setSelectedUser] = useState(null);
 
     const [state, dispatch] = useContext(MetaMaskContext);
@@ -31,7 +56,7 @@ export const CreateChat = () => {
 
     // Check if MetaMask and Snap are connected
   if (window.ethereum.isConnected()) {
-    console.log('MetaMask is connected!');
+    //console.log('MetaMask is connected!');
   } else {
     navigate("/login");
   }
@@ -40,7 +65,7 @@ export const CreateChat = () => {
       : state.snapsDetected;
   
   if (isMetaMaskReady) {
-    console.log('Snap is connected!');
+    //console.log('Snap is connected!');
   } else {
     navigate("/login");
   }
@@ -65,7 +90,6 @@ export const CreateChat = () => {
 
         const data = await response.json();
         setUsers(data);
-        console.log(data)
       } catch (error) {
         console.error('Error:', error);
         navigate("/");
@@ -75,46 +99,48 @@ export const CreateChat = () => {
     fetchAllUsers();
   }, []);
 
-  const handleUserSelection = (userId) => {
-    setSelectedUser(userId); 
+
+
+
+  const handleFilterChange = (event) => {
+    setFilter(event.target.value);
   };
 
-  const handleSendMessage = () => {
-    if (selectedUser) {
-    const selectedUserData = Object.values(Users).find(user => user.Id === selectedUser);
-    if (selectedUserData) {
-      navigate(`/send-message/${selectedUserData.Username}`);
-  }
-}
-};
+  const usersArray = Object.values(Users);
+  
+  const filteredUsers = usersArray.filter((user) =>
+    user.Username.toLowerCase().includes(filter.toLowerCase())
+  );
 
   return (
-    <div style={centerStyle}>
-      <div>
-        <h2 style={{ marginTop: '50px' }}>Users:</h2>
-        {Users.length === 0 ? (
-          <p>You have no chats yet</p>
-        ) : (
-          <ul style={userListStyle}>
-            {Object.values(Users).map((user) => (
-              <li key={user.Id}>
-                <label>
-                  <input
-                    type="radio"
-                    name="selectedUser"
-                    value={user.Id}
-                    checked={selectedUser === user.Id}
-                    onChange={() => handleUserSelection(user.Id)}
-                  />
-                  {user.Username}
-                </label>
-              </li>
-            ))}
-          </ul>
-        )}
-        <button onClick={handleSendMessage} disabled={!selectedUser}>
-          Send a Message
-        </button>
-      </div>
+    <Container> 
+
+    <div style={userListStyle}>
+    <input
+      type="text"
+      value={filter}
+      onChange={handleFilterChange}
+      placeholder="username"
+      style={{
+        width: '300px',
+        height: '40px',
+        padding: '0 10px',
+        borderRadius: '20px',
+        border: '1px solid #ccc',
+        outline: 'none',
+        transition: 'all 0.3s ease',
+      }}
+    />
+      <ul>
+        {filteredUsers.map((user) => (
+          <li key={user.Id}>
+          <Link to={`/send-message/${user.Username}`}> {user.Username} </Link>
+            </li>
+        ))}
+      </ul>
     </div>
-  )}
+    </Container>
+  );
+};
+
+export default CreateChat;
