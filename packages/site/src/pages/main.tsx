@@ -35,7 +35,7 @@ const Main = () => {
 
         // Check if MetaMask is connected
   if (window.ethereum.isConnected()) {
-    console.log('MetaMask is connected!');
+    //console.log('MetaMask is connected!');
   } else {
     navigate("/login");
   }
@@ -44,38 +44,15 @@ const Main = () => {
       : state.snapsDetected;
   
   if (isMetaMaskReady) {
-    console.log('Snap is connected!');
+    //console.log('Snap is connected!');
   } else {
     navigate("/login");
   }
 
 
-/*   function checkCookie(cookieName: string) {
-    return document.cookie.split(';').some((cookie) => cookie.trim().startsWith(cookieName + '=')); }
-  if (!checkCookie('session-id')) {
-    navigate("/login"); } */
-
-
-
-/*     const handleSendHelloClick = async () => {
-      try {
-        var data =  await GetSharedSecret()
-        console.log("store",data);
-        await sendHello("SUPER TEST");
-      } catch (error) {
-        console.error(error);
-       // dispatch({ type: MetamaskActions.SetError, payload: error });
-      }} */
-    //<button onClick={handleSendHelloClick} style={{ marginRight: '60px', padding: '20px 40px', fontSize: '1.7rem' }}>HELLO</button>
-
-
     const handleChatsClick = () => {
       navigate("/chats");    
     }
-
-/*     const handleTestChatClick = () => {
-      navigate("/chats/NewUser");    
-    } */
 
     const handleCreateChatClick = () => {
       navigate("/chats/create");
@@ -97,8 +74,7 @@ const Main = () => {
         },
         body: JSON.stringify({ sessionId: session }) 
       });
-/*       localStorage.removeItem('session-id');
-      document.cookie = `session-id; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`; */
+
       navigate("/login");
     } catch (error) {
       console.error('Error:', error);
