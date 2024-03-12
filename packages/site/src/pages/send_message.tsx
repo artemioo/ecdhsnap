@@ -3,9 +3,7 @@ import styled from 'styled-components';
 import { defaultSnapOrigin } from '../config';
 import { MetamaskActions, MetaMaskContext } from '../hooks';
 import {
-  CreateSharedSecret,
   EnсryptMessage,
-  CheckSharedSecret,
   isLocalSnap,
 
 } from '../utils';
@@ -30,7 +28,7 @@ export const SendMessage = () => {
 
         // Check if MetaMask is connected
     if (window.ethereum.isConnected()) {
-        console.log('MetaMask is connected!');
+        //console.log('MetaMask is connected!');
     } else {
       navigate("/login");
         return null;
@@ -40,7 +38,7 @@ export const SendMessage = () => {
         : state.snapsDetected;
     
     if (isMetaMaskReady) {
-        console.log('Snap is connected!');
+        //console.log('Snap is connected!');
     } else {
       navigate("/login");
         return null;
@@ -68,11 +66,7 @@ export const SendMessage = () => {
           if (username == undefined) {
             throw new Error('URL path was not ok');
           } else {
-            const CheckSecret = await CheckSharedSecret(username)
-            if (CheckSecret == true) {
-              
-            await CreateSharedSecret(username, data["pubKey"]);
-            const ciphertext = await EnсryptMessage(username, message);
+            const ciphertext = await EnсryptMessage(data["pubKey"], message);
           
 
         const GetPairId = await fetch(`http://localhost:8100/pair/create`, {
@@ -108,7 +102,7 @@ export const SendMessage = () => {
           navigate(`/chats`)
         }
       }
-        } 
+        
         catch(error) {
           console.error('Server error:', error);
         };
