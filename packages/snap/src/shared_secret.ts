@@ -1,6 +1,6 @@
 import { getBytes, SigningKey } from 'ethers';
 import { id } from 'ethers';
-;
+
 
 export const EnсryptMessage = async (partnerPubKey: string, message: string)  => {
 
