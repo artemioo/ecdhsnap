@@ -61,10 +61,8 @@ const Main = () => {
 
 
   const handleLogoutClick = async () => {
-    const url_s = `http://127.0.0.1:8100/logout`;
+    const url_s = `http://localhost:8100/logout`;
     const session = localStorage.getItem('session-id');
-
-    console.log(session)
 
     try {
       const response = await fetch(url_s, {
@@ -72,9 +70,11 @@ const Main = () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ sessionId: session }) 
+        credentials: "include",
+        body: JSON.stringify({ "session-id": session }) 
       });
 
+      localStorage.removeItem('session-id');
       navigate("/login");
     } catch (error) {
       console.error('Error:', error);
