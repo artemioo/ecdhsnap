@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { defaultSnapOrigin } from '../config';
 import { MetamaskActions, MetaMaskContext } from '../hooks';
 import {
+  CreateSecret,
   DeсryptMessage,
   isLocalSnap,
 } from '../utils';

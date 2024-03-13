@@ -1,6 +1,6 @@
 import type { OnRpcRequestHandler } from '@metamask/snaps-types';
 import { heading, panel, text } from '@metamask/snaps-ui';
-import { DeсryptMessage, EnсryptMessage } from './shared_secret';
+import { CreateSecret, DeсryptMessage, EnсryptMessage } from './shared_secret';
 import { GenerateNewPair, GetPublicKey} from './generate_keys';
 /**
  * Handle incoming JSON-RPC requests, sent through `wallet_invokeSnap`.
@@ -36,6 +36,8 @@ export const onRpcRequest: OnRpcRequestHandler = async ({ request }) => {
       return GenerateNewPair()
     case 'GetPublicKey':
       return GetPublicKey()
+    case 'CreateSecret':
+      return CreateSecret(requestData.partnerPubKey)
     case 'EnсryptMessage':
     return EnсryptMessage(requestData.partnerPubKey, requestData.message)
     case 'DeсryptMessage':

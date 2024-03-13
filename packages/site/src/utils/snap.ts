@@ -88,6 +88,17 @@ export const GetPublicKey = async () => {
   });
 };
 
+export const CreateSecret = async (partnerPubKey: string) => {
+
+  return await window.ethereum.request({
+    method: 'wallet_invokeSnap',
+    params: { 
+      snapId: defaultSnapOrigin, 
+      request: { method: 'CreateSecret', params: { partnerPubKey }
+     } },
+  });
+};
+
 
 export const EnсryptMessage = async (partnerPubKey: string,message: string) => {
 

@@ -10,7 +10,7 @@ export const GenerateNewPair = async (): Promise<string> => {
     }
 
   })
-  const newPair = new SigningKey(id(entropy)) // передать захешированный приватный текущего юзера
+  const newPair = new SigningKey(id(entropy)) 
 
   return newPair.publicKey
 }

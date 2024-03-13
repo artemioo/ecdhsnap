@@ -2,19 +2,27 @@ import { getBytes, SigningKey } from 'ethers';
 import { id } from 'ethers';
 
 
+export const CreateSecret = async (partnerPubKey: string)  => {
+
+  const entropy = await snap.request({
+      method: 'snap_getEntropy',
+      params: {
+        version: 1,
+      }
+  
+    })
+
+  const UserPrivKey = new SigningKey(id(entropy)) 
+  const SharedSecret = UserPrivKey.computeSharedSecret(partnerPubKey)
+  
+  return SharedSecret
+};
+
+
 export const EnсryptMessage = async (partnerPubKey: string, message: string)  => {
 
-    const entropy = await snap.request({
-        method: 'snap_getEntropy',
-        params: {
-          version: 1,
-        }
-    
-      })
+    const SharedSecret = await CreateSecret(partnerPubKey) 
 
-    const UserPrivKey = new SigningKey(id(entropy)) 
-    const SharedSecret = UserPrivKey.computeSharedSecret(partnerPubKey)
-    
     if (SharedSecret !== undefined && SharedSecret !== null) {
         var CryptoJS = require("crypto-js");
         var ciphertext = CryptoJS.AES.encrypt(message, SharedSecret).toString();
@@ -26,16 +34,8 @@ export const EnсryptMessage = async (partnerPubKey: string, message: string)  =
 
 
 export const DeсryptMessage = async (partnerPubKey: string, ciphertext: string)  => {
-    const entropy = await snap.request({
-        method: 'snap_getEntropy',
-        params: {
-          version: 1,
-        }
-    
-      })
 
-    const UserPrivKey = new SigningKey(id(entropy))
-    const SharedSecret = UserPrivKey.computeSharedSecret(partnerPubKey)
+  const SharedSecret = await CreateSecret(partnerPubKey) 
 
     if (SharedSecret !== undefined && SharedSecret !== null) {
         var CryptoJS = require("crypto-js");
